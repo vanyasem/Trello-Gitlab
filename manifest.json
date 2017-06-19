@@ -1,0 +1,29 @@
+{
+  "name": "GitLab",
+  "description": "The GitLab Power-Up",
+  "details": "The GitLab Power-Up",
+  "icon": {
+    "url": "./images/logo.png"
+  },
+  "author": "Ivan Semkin",
+  "capabilities": [
+    "attachment-sections",
+    "attachment-thumbnail",
+    "board-buttons",
+    "callback",
+    "card-badges",
+    "card-buttons",
+    "card-detail-badges",
+    "card-from-url",
+    "format-url",
+    "show-settings"
+  ],
+  "connectors": {
+    "iframe": {
+      "url": "./index.html"
+    }
+  },
+  "recommend": {
+    "urls": []
+  }
+}
