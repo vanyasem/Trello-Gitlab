@@ -61,7 +61,7 @@ document.getElementById('repoAdd').addEventListener('click', function(){
   return getTokenPromise()
     .then(result => {
       //alert(result);
-      var url = 'https://gitlab.com/api/v4/projects?owned=true&access_token='+result;
+      var url = 'https://gitlab.com/api/v4/projects?owned=true&simple=true&access_token='+result;
       fetch(url)
         .then(function(response) {
           return response.json();
@@ -85,7 +85,7 @@ document.getElementById('repoAdd').addEventListener('click', function(){
                     promise= t.set('board', 'shared', 'repos', { id: repoId, name: literal[repoId] });
                   });
                 promise.then(fun => {
-                  return t.closePopup();
+                  return t.back();
                 })
               }
             };

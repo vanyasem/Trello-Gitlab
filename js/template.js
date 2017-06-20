@@ -21,6 +21,13 @@ var parkMap = {
   zion: 'Zion National Park'
 };
 
+var cardActions = {
+  branches: 'Attach Branch',
+  commit: 'Attach Commit',
+  issues: 'Attach Issue',
+  merge_requests: 'Attach Pull Request'
+};
+
 var getBadges = function(t){
   return t.card('name')
   .get('name')
@@ -81,14 +88,29 @@ var formatNPSUrl = function(t, url){
   }
 };
 
+var formatGitLabUrl = function(t, url){
+  if(!/^https?:\/\/gitlab\.com\//.test(url)){
+    return undefined;
+  }
+  var parkShort = /^https?:\/\/www\.nps\.gov\/([a-z]{4})\//.exec(url)[1];
+  if(parkShort && parkMap[parkShort]){
+    return parkMap[parkShort];
+  } else{
+    return null;
+  }
+};
+
 var cardButtonCallback = function(t){
-  var items = Object.keys(parkMap).map(function(parkCode){
-    var urlForCode = 'http://www.nps.gov/' + parkCode + '/';
+  var items = Object.keys(cardActions).map(function(action){
+
+
+
+    var urlForCode = 'https://gitlab.com' + action + '/';
     return {
-      text: parkMap[parkCode],
+      text: cardActions[action],
       url: urlForCode,
       callback: function(t){
-        return t.attach({ url: urlForCode, name: parkMap[parkCode] })
+        return t.attach({ url: urlForCode, name: cardActions[action] })
         .then(function(){
           return t.closePopup();
         })
@@ -166,17 +188,6 @@ TrelloPowerUp.initialize({
   },
   'card-detail-badges': function(t, options) {
     return getBadges(t);
-  },
-  'card-from-url': function(t, options) {
-    var parkName = formatNPSUrl(t, options.url);
-    if(parkName){
-      return {
-        name: parkName,
-        desc: 'An awesome park: ' + options.url
-      };
-    } else {
-      throw t.NotHandled();
-    }
   },
   'format-url': function(t, options) {
     var parkName = formatNPSUrl(t, options.url);
