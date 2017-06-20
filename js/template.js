@@ -1,5 +1,7 @@
 /* global TrelloPowerUp */
 
+var Promise = TrelloPowerUp.Promise;
+
 var WHITE_ICON = './images/icon-white.svg';
 var GRAY_ICON = './images/icon-gray.svg';
 
@@ -195,9 +197,20 @@ TrelloPowerUp.initialize({
     });
   },
   'authorization-status': function(t) {
-        return new TrelloPowerUp.Promise((resolve) =>
+        return new TrelloPowerUp.Promise((resolve) => {
+          Promise.all([
+            t.get('organization', 'private', 'token'),
+            t.get('board', 'private', 'token'),
+          ]).spread(function(organizationToken, boardToken){
+            if(organizationToken && /^[0-9a-f]{64}$/.test(organizationToken)){
+              resolve({ authorized: true })
+            }
+            if(boardToken && /^[0-9a-f]{64}$/.test(boardToken)){
+              resolve({ authorized: true })
+            }
             resolve({ authorized: false })
-        )
+          });
+        })
   },
   'show-authorization': function(t) {
       t.popup({

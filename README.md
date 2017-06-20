@@ -1,38 +1,27 @@
-# Trello Power-Up Template
-A static GitHub pages hosted sample Power-Up. Feel free to fork this repo as a starting point for your own Trello Power-Up.
+# Trello GitLab Power-Up
 
-Want to try this sample out right away without waiting? Put this url (https://peacedoorball.ru/trello/manifest.json) into the prompt on https://trello.com/power-up-preview then you will see a new Power-Up called 'GitLab' show up in your list of Power-Ups.
+**Foxes love nice things, too.**
 
-## Features
+This Power-Up is WIP, however, if you want to try this out right away without waiting for it to get released - put this url (https://peacedoorball.ru/trello/manifest.json) into the prompt on https://trello.com/power-up-preview then you will see a new Power-Up called 'GitLab' show up in your list of Power-Ups.
 
-### Attachment Sections
-To see how the attachment-sections capability works, try attaching the following url to a card: http://www.nps.gov/yell/index.htm
+## Checklist
 
-### Attachment Thumbnail
-To see how the attachment-thumbnail capability works, try attaching the following url onto any card: http://www.nps.gov/glac/index.htm
+- ~~Host the Power-Up~~
 
-### Board Buttons
-To see how the board-buttons capability works, try clicking the 'Template' button at the top right of the board after enabling this Power-Up.
+- ~~Implement OAuth~~
 
-### Card Badges & Card Detail Badges
-To see how card-badges and card-detail-badges capabilities work, create some cards on a board with this Power-Up enabled that contain variations of the following keywords in the name:
+- Implement GitLab Enterprise
 
-- static - Shows a badge on the card that doesn't change
-- dynamic - Shows a badge on the card that updates every 10 seconds
-- green - colors the badge green
-- yellow - colors the badge yellow
-- red - colors the badge red
+- Implement attaching Branches
 
-card-badges are what shows up on the front of cards, and card-detail-badges show up underneath the card name when you open a card.
+- Implement attaching Commits
 
-### Card Buttons
-To see how the card-buttons capability works, try opening a card after this Power-Up is enabled, and clicking the button called 'Template'.
+- Implement attaching Issues
 
-### Card From Url
-To see how the card-from-url capability works, try pasting (Ctrl+v) the following url onto any 'Add a card...' button: http://www.nps.gov/crla/index.htm
+- Implement attaching PRs
 
-### Format Url
-To see how the format-url capability works, try pasting the following link into a comment or description on a card: http://www.nps.gov/grca/index.htm
+- Send comment when attached
 
-### Show Settings
-To see how the show-settings capability works, try clicking the gear button next to the Power-Up in the Power-Ups menu.
+- Internationalization
+
+- Contact GitLab and make it official
