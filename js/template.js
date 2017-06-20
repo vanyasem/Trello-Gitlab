@@ -79,38 +79,6 @@ var formatNPSUrl = function(t, url){
   }
 };
 
-var boardButtonCallback = function(t){
-  return t.popup({
-    title: 'Popup List Example',
-    items: [
-      {
-        text: 'Open Overlay',
-        callback: function(t){
-          return t.overlay({
-            url: './overlay.html',
-            args: { rand: (Math.random() * 100).toFixed(0) }
-          })
-          .then(function(){
-            return t.closePopup();
-          });
-        }
-      },
-      {
-        text: 'Open Board Bar',
-        callback: function(t){
-          return t.boardBar({
-            url: './board-bar.html',
-            height: 200
-          })
-          .then(function(){
-            return t.closePopup();
-          });
-        }
-      }
-    ]
-  });
-};
-
 var cardButtonCallback = function(t){
   var items = Object.keys(parkMap).map(function(parkCode){
     var urlForCode = 'http://www.nps.gov/' + parkCode + '/';
@@ -127,13 +95,8 @@ var cardButtonCallback = function(t){
   });
 
   return t.popup({
-    title: 'Popup Search Example',
-    items: items,
-    search: {
-      count: 5,
-      placeholder: 'Search National Parks',
-      empty: 'No parks found'
-    }
+    title: 'GitLab',
+    items: items
   });
 };
 
@@ -189,20 +152,13 @@ TrelloPowerUp.initialize({
       throw t.NotHandled();
     }
   },
-  'board-buttons': function(t, options){
-    return [{
-      icon: WHITE_ICON,
-      text: 'Template',
-      callback: boardButtonCallback
-    }];
-  },
   'card-badges': function(t, options){
     return getBadges(t);
   },
   'card-buttons': function(t, options) {
     return [{
       icon: GRAY_ICON,
-      text: 'Template',
+      text: 'GitLab',
       callback: cardButtonCallback
     }];
   },
@@ -237,5 +193,17 @@ TrelloPowerUp.initialize({
       url: './settings.html',
       height: 184
     });
+  },
+  'authorization-status': function(t) {
+        return new TrelloPowerUp.Promise((resolve) =>
+            resolve({ authorized: false })
+        )
+  },
+  'show-authorization': function(t) {
+      t.popup({
+          title: 'Authorize',
+          url: './authorize.html',
+          height: 140
+      });
   }
 });
