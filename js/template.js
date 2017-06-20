@@ -202,10 +202,8 @@ TrelloPowerUp.initialize({
             t.get('organization', 'private', 'token'),
             t.get('board', 'private', 'token'),
           ]).spread(function(organizationToken, boardToken){
-            if(organizationToken && /^[0-9a-f]{64}$/.test(organizationToken)){
-              resolve({ authorized: true })
-            }
-            if(boardToken && /^[0-9a-f]{64}$/.test(boardToken)){
+            if((organizationToken && /^[0-9a-f]{64}$/.test(organizationToken))
+              || (boardToken && /^[0-9a-f]{64}$/.test(boardToken))){
               resolve({ authorized: true })
             }
             resolve({ authorized: false })
@@ -216,7 +214,7 @@ TrelloPowerUp.initialize({
       t.popup({
           title: 'Authorize',
           url: './authorize.html',
-          height: 140
+          height: 150
       });
   }
 });
