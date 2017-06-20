@@ -23,23 +23,38 @@ function getTokenPromise() {
 }
 
 t.render(function(){
-  /*
-  return Promise.all([
-    t.get('board', 'shared', 'fruit'),
-    t.get('board', 'private', 'vegetable')
-  ])
-  .spread(function(savedFruit, savedVegetable){
-    if(savedFruit && /[a-z]+/.test(savedFruit)){
-      fruitSelector.value = savedFruit;
-    }
-    if(savedVegetable && /[a-z]+/.test(savedVegetable)){
-      vegetableSelector.value = savedVegetable;
-    }
+  return new TrelloPowerUp.Promise((resolve) => {
+    Promise.all([
+      t.get('organization', 'shared', 'repos'),
+      t.get('board', 'shared', 'repos'),
+    ]).spread(function(organizationRepos, boardRepos){
+      if(organizationRepos){
+        resolve(organizationRepos)
+      }
+      if(boardRepos){
+        resolve(boardRepos)
+      }
+      resolve(undefined)
+    });
   })
-  .then(function(){
-    t.sizeTo('#content')
-    .done();
-  })*/
+    .then(result => {
+      if(result) {
+        repoList.innerHTML = result["name"] +
+          "<a id=\"remove\" data-repo-id=" + result["id"] + ">Remove</a>";
+
+        var remove = document.getElementById('remove');
+        remove.addEventListener('click', function(){
+          remove.getAttribute("data");
+          t.set('organization', 'shared', 'repos', undefined)
+          t.set('board', 'shared', 'repos', undefined)
+        })
+      }
+    else
+      repoList.innerHTML = "No repos added";
+    }).then(fun => {
+      t.sizeTo('#content')
+        .done();
+    })
 });
 
 document.getElementById('repoAdd').addEventListener('click', function(){
@@ -62,9 +77,16 @@ document.getElementById('repoAdd').addEventListener('click', function(){
           var items = Object.keys(literal).map(function(repoId){
             return {
               text: literal[repoId],
-              url: urlForCode,
               callback: function(t){
-                return t.closePopup();
+                var promise = undefined;
+                promise = t.set('organization', 'shared', 'repos', { id: repoId, name: literal[repoId] })
+                  .catch(t.NotHandled, function() {
+                    // fall back to storing at board level
+                    promise= t.set('board', 'shared', 'repos', { id: repoId, name: literal[repoId] });
+                  });
+                promise.then(fun => {
+                  return t.closePopup();
+                })
               }
             };
           });
