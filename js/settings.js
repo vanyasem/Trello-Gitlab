@@ -8,16 +8,27 @@ let repoList = document.getElementById('repoList');
 t.render(function(){
     return Utils.getDataPromise(t, 'shared', 'repos')
         .then(result => {
-            if(result) {
-                repoList.innerHTML = result["name"] +
-                    "<a id=\"remove\" data-repo-id=" + result["id"] + ">Remove</a>";
+            if(result && result.length > 0) {
+                repoList.innerHTML = "";
+                for(let i = 0; i < result.length; i++) {
+                    const par = document.createElement("p");
+                    repoList.appendChild(par);
 
-                let remove = document.getElementById('remove');
-                remove.addEventListener('click', function(){
-                    remove.getAttribute("data");
-                    t.set('organization', 'shared', 'repos', undefined);
-                    t.set('board', 'shared', 'repos', undefined);
-                })
+                    const name = document.createTextNode(result[i]["name"]);
+                    par.appendChild(name);
+
+                    let remove = document.createElement("a");
+                    remove.setAttribute("data-repo", result[i]["id"]);
+                    remove.setAttribute("style", "float: right;");
+                    remove.text = "Remove";
+                    par.appendChild(remove);
+
+                    remove.onclick = function() {
+                        const id = this.getAttribute("data-repo");
+                        alert(id);
+                        removeFromRepoList(id);
+                    };
+                }
             }
             else
                 repoList.innerHTML = "No repos added";
@@ -26,6 +37,38 @@ t.render(function(){
                 .done();
         })
 });
+
+function addToRepoList(repo) {
+    return Utils.getDataPromise(t, 'shared', 'repos')
+        .then(result => {
+            if(result) {
+                result.push(repo);
+                Utils.setDataPromise(t, 'shared', 'repos', result)
+            } else {
+                Utils.setDataPromise(t, 'shared', 'repos', [repo])
+            }
+        })
+}
+
+function searchReposArray(idKey, array) {
+    for (let i=0; i < array.length; i++) {
+        if (array[i].id === idKey) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function removeFromRepoList(id) {
+    return Utils.getDataPromise(t, 'shared', 'repos')
+        .then(result => {
+            const index = searchReposArray(id, result);
+            if (index > -1) {
+                result.splice(index, 1);
+                Utils.setDataPromise(t, 'shared', 'repos', result);
+            }
+        })
+}
 
 document.getElementById('repoAdd').addEventListener('click', function(){
     return Utils.getDataPromise(t, 'private', 'token')
@@ -50,15 +93,10 @@ document.getElementById('repoAdd').addEventListener('click', function(){
                         return {
                             text: literal[repoId],
                             callback: function(t){
-                                let promise = undefined;
-                                promise = t.set('organization', 'shared', 'repos', { id: repoId, name: literal[repoId] })
-                                    .catch(t.NotHandled, function() {
-                                        // fall back to storing at board level
-                                        promise= t.set('board', 'shared', 'repos', { id: repoId, name: literal[repoId] });
-                                    });
-                                promise.then(() => {
-                                    return t.back();
-                                })
+                                addToRepoList({ id: repoId, name: literal[repoId] })
+                                    .then(() => {
+                                        return t.back();
+                                    })
                             }
                         };
                     });

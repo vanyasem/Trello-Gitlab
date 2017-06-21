@@ -19,11 +19,7 @@ document.getElementById('authorize')
     .addEventListener('click', function() {
     t.authorize(oauthUrl, authorizeOpts)
         .then(function(token) {
-            return t.set('organization', 'private', 'token', token)
-                .catch(t.NotHandled, function() {
-                    // fall back to storing at board level
-                    return t.set('board', 'private', 'token', token);
-                });
+            return Utils.setDataPromise(t, 'private', 'token', token);
         })
         .then(function() {
             // todo prob open another pop-up

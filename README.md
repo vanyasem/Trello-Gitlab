@@ -14,7 +14,7 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - Implement GitLab Enterprise
 
-- Implement connecting repos
+- ~~Implement connecting repos~~
 
 - Implement attaching Branches
 
@@ -25,6 +25,10 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 - Implement attaching PRs
 
 - Send comment when attached
+
+- Implement Board Buttons
+
+- Improve the UI
 
 - Internationalization
 

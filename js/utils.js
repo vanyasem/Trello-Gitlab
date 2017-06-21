@@ -5,6 +5,14 @@
 const Utils = (function(){
 
     return {
+        setDataPromise: function (t, visibility, name, value) {
+            return t.set('organization', visibility, name, value)
+                .catch(t.NotHandled, function() {
+                    // fall back to storing at board level
+                    return t.set('board', visibility, name, value);
+                });
+        },
+
         getDataPromise: function (t, visibility, name) {
             return new TrelloPowerUp.Promise((resolve) => {
                 Promise.all([
@@ -24,7 +32,7 @@ const Utils = (function(){
 
         tokenLooksValid: function(token) {
             return /^[0-9a-f]{64}$/.test(token);
-        },
+        }
     }
 
 }());
