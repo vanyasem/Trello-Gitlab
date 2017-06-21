@@ -30,7 +30,15 @@ authBtn.addEventListener('click', function() {
                 });
         })
         .then(function() {
-          // todo prob open another pop-up
+            // todo prob open another pop-up
             return t.closePopup();
         });
+});
+
+var enterpriseBtn = document.getElementById('enterprise');
+enterpriseBtn.addEventListener('click', function() {
+    return t.overlay({
+        url: './php/auth_enterprise.php',
+        args: { rand: (Math.random() * 100).toFixed(0) }
+    });
 });
