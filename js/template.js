@@ -1,11 +1,11 @@
 /* global TrelloPowerUp */
 
-var Promise = TrelloPowerUp.Promise;
+const Promise = TrelloPowerUp.Promise;
 
-var WHITE_ICON = './images/icon-white.svg';
-var GRAY_ICON = './images/icon-gray.svg';
+const WHITE_ICON = './images/icon-white.svg';
+const GRAY_ICON = './images/icon-gray.svg';
 
-var parkMap = {
+const parkMap = {
     acad: 'Acadia National Park',
     arch: 'Arches National Park',
     badl: 'Badlands National Park',
@@ -21,20 +21,20 @@ var parkMap = {
     zion: 'Zion National Park'
 };
 
-var cardActions = {
+const cardActions = {
     branches: 'Attach Branch',
     commit: 'Attach Commit',
     issues: 'Attach Issue',
     merge_requests: 'Attach Pull Request'
 };
 
-var getBadges = function(t){
+const getBadges = function(t){
     return t.card('name')
         .get('name')
         .then(function(cardName){
-            var badgeColor;
-            var icon = GRAY_ICON;
-            var lowercaseName = cardName.toLowerCase();
+            let badgeColor;
+            let icon = GRAY_ICON;
+            let lowercaseName = cardName.toLowerCase();
             if(lowercaseName.indexOf('green') > -1){
                 badgeColor = 'green';
                 icon = WHITE_ICON;
@@ -76,7 +76,7 @@ var getBadges = function(t){
         })
 };
 
-var formatNPSUrl = function(t, url){
+const formatNPSUrl = function(t, url){
     if(!/^https?:\/\/www\.nps\.gov\/[a-z]{4}\//.test(url)){
         return null;
     }
@@ -88,11 +88,11 @@ var formatNPSUrl = function(t, url){
     }
 };
 
-var formatGitLabUrl = function(t, url){
+const formatGitLabUrl = function(t, url){
     if(!/^https?:\/\/gitlab\.com\//.test(url)){
         return undefined;
     }
-    var parkShort = /^https?:\/\/www\.nps\.gov\/([a-z]{4})\//.exec(url)[1];
+    const parkShort = /^https?:\/\/www\.nps\.gov\/([a-z]{4})\//.exec(url)[1];
     if(parkShort && parkMap[parkShort]){
         return parkMap[parkShort];
     } else{
@@ -100,10 +100,10 @@ var formatGitLabUrl = function(t, url){
     }
 };
 
-var cardButtonCallback = function(t){
-    var items = Object.keys(cardActions).map(function(action){
+const cardButtonCallback = function(t){
+    const items = Object.keys(cardActions).map(function(action){
 
-        var urlForCode = 'https://gitlab.com' + action + '/';
+        const urlForCode = 'https://gitlab.com' + action + '/';
         return {
             text: cardActions[action],
             url: urlForCode,
@@ -129,7 +129,7 @@ TrelloPowerUp.initialize({
         // include in your section.
 
         // we will just claim urls for Yellowstone
-        var claimed = options.entries.filter(function(attachment){
+        const claimed = options.entries.filter(function(attachment){
             return attachment.url.indexOf('http://www.nps.gov/yell/') == 0;
         });
 
@@ -157,7 +157,7 @@ TrelloPowerUp.initialize({
         }
     },
     'attachment-thumbnail': function(t, options){
-        var parkName = formatNPSUrl(t, options.url);
+        const parkName = formatNPSUrl(t, options.url);
         if(parkName){
             // return an object with some or all of these properties:
             // url, title, image, openText, modified (Date), created (Date), createdBy, modifiedBy
@@ -188,7 +188,7 @@ TrelloPowerUp.initialize({
         return getBadges(t);
     },
     'format-url': function(t, options) {
-        var parkName = formatNPSUrl(t, options.url);
+        const parkName = formatNPSUrl(t, options.url);
         if(parkName){
             return {
                 icon: GRAY_ICON,
