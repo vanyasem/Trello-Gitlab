@@ -9,14 +9,10 @@ const oauthUrl = Config.domain + 'oauth/authorize?' +
     '&response_type=code' +
     '&state=state'; //todo random state
 
-const tokenLooksValid = function(token) {
-    return /^[0-9a-f]{64}$/.test(token);
-};
-
 const authorizeOpts = {
     height: 680,
     width: 580,
-    validToken: tokenLooksValid
+    validToken: Utils.tokenLooksValid
 };
 
 document.getElementById('authorize')

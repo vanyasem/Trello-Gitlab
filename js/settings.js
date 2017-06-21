@@ -5,38 +5,8 @@ const t = TrelloPowerUp.iframe();
 
 let repoList = document.getElementById('repoList');
 
-function getTokenPromise() {
-    return new TrelloPowerUp.Promise((resolve) => {
-        Promise.all([
-            t.get('organization', 'private', 'token'),
-            t.get('board', 'private', 'token'),
-        ]).spread(function(organizationToken, boardToken){
-            if(organizationToken && /^[0-9a-f]{64}$/.test(organizationToken)){
-                resolve(organizationToken)
-            }
-            if(boardToken && /^[0-9a-f]{64}$/.test(boardToken)){
-                resolve(boardToken)
-            }
-            resolve(undefined)
-        });
-    })
-}
-
 t.render(function(){
-    return new TrelloPowerUp.Promise((resolve) => {
-        Promise.all([
-            t.get('organization', 'shared', 'repos'),
-            t.get('board', 'shared', 'repos'),
-        ]).spread(function(organizationRepos, boardRepos){
-            if(organizationRepos){
-                resolve(organizationRepos)
-            }
-            if(boardRepos){
-                resolve(boardRepos)
-            }
-            resolve(undefined)
-        });
-    })
+    return Utils.getDataPromise(t, 'shared', 'repos')
         .then(result => {
             if(result) {
                 repoList.innerHTML = result["name"] +
@@ -45,22 +15,24 @@ t.render(function(){
                 let remove = document.getElementById('remove');
                 remove.addEventListener('click', function(){
                     remove.getAttribute("data");
-                    t.set('organization', 'shared', 'repos', undefined)
-                    t.set('board', 'shared', 'repos', undefined)
+                    t.set('organization', 'shared', 'repos', undefined);
+                    t.set('board', 'shared', 'repos', undefined);
                 })
             }
             else
                 repoList.innerHTML = "No repos added";
-        }).then(fun => {
+        }).then(() => {
             t.sizeTo('#content')
                 .done();
         })
 });
 
 document.getElementById('repoAdd').addEventListener('click', function(){
-    return getTokenPromise()
+    return Utils.getDataPromise(t, 'private', 'token')
         .then(result => {
-            //alert(result);
+            if(!Utils.tokenLooksValid(result))
+                return;
+
             const url = Config.domain + "api/v4/projects?owned=true&simple=true&access_token="+result;
             fetch(url)
                 .then(function(response) {
@@ -84,7 +56,7 @@ document.getElementById('repoAdd').addEventListener('click', function(){
                                         // fall back to storing at board level
                                         promise= t.set('board', 'shared', 'repos', { id: repoId, name: literal[repoId] });
                                     });
-                                promise.then(fun => {
+                                promise.then(() => {
                                     return t.back();
                                 })
                             }

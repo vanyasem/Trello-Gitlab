@@ -80,7 +80,7 @@ const formatNPSUrl = function(t, url){
     if(!/^https?:\/\/www\.nps\.gov\/[a-z]{4}\//.test(url)){
         return null;
     }
-    var parkShort = /^https?:\/\/www\.nps\.gov\/([a-z]{4})\//.exec(url)[1];
+    const parkShort = /^https?:\/\/www\.nps\.gov\/([a-z]{4})\//.exec(url)[1];
     if(parkShort && parkMap[parkShort]){
         return parkMap[parkShort];
     } else{
@@ -130,7 +130,7 @@ TrelloPowerUp.initialize({
 
         // we will just claim urls for Yellowstone
         const claimed = options.entries.filter(function(attachment){
-            return attachment.url.indexOf('http://www.nps.gov/yell/') == 0;
+            return attachment.url.indexOf('http://www.nps.gov/yell/') === 0;
         });
 
         // you can have more than one attachment section on a card
@@ -207,17 +207,14 @@ TrelloPowerUp.initialize({
     },
     'authorization-status': function(t) {
         return new TrelloPowerUp.Promise((resolve) => {
-            Promise.all([
-                t.get('organization', 'private', 'token'),
-                t.get('board', 'private', 'token'),
-            ]).spread(function(organizationToken, boardToken){
-                if((organizationToken && /^[0-9a-f]{64}$/.test(organizationToken))
-                    || (boardToken && /^[0-9a-f]{64}$/.test(boardToken))){
-                    resolve({ authorized: true })
-                }
-                resolve({ authorized: false })
-            });
-        })
+            Utils.getDataPromise(t, 'private', 'token')
+                .then(result => {
+                    if (result && Utils.tokenLooksValid(result)) {
+                        resolve({authorized: true});
+                    }
+                    resolve({authorized: false});
+                });
+        });
     },
     'show-authorization': function(t) {
         t.popup({
