@@ -119,7 +119,7 @@ const formatGitLabUrl = function(t, url){
 };
 
 
-function processBranches(urlForCode, json) {
+function processBranches(urlForCode, json, projectId) {
     let branches = {};
 
     for(let i = 0; i < json.length; i++) {
@@ -141,7 +141,7 @@ function processBranches(urlForCode, json) {
     });
 }
 
-function processCommits(urlForCode, json) {
+function processCommits(urlForCode, json, projectId) {
     let commits = {};
 
     for(let i = 0; i < json.length; i++) {
@@ -163,7 +163,7 @@ function processCommits(urlForCode, json) {
     });
 }
 
-function processIssues(urlForCode, json) {
+function processIssues(urlForCode, json, projectId) {
     let issues = {};
 
     for(let i = 0; i < json.length; i++) {
@@ -177,7 +177,10 @@ function processIssues(urlForCode, json) {
             callback: function(t){
                 return t.attach({ url: urlForCode + iid, name: issues[iid] })
                     .then(function(){
-                        return t.closePopup();
+                        commentIssue(t, projectId, iid)
+                            .then(() => {
+                            return t.closePopup();
+                        })
                     });
             }
         };
@@ -185,7 +188,7 @@ function processIssues(urlForCode, json) {
     });
 }
 
-function processMrs(urlForCode, json) {
+function processMrs(urlForCode, json, projectId) {
     let mrs = {};
 
     for(let i = 0; i < json.length; i++) {
@@ -205,6 +208,27 @@ function processMrs(urlForCode, json) {
         };
 
     });
+}
+
+function commentIssue(t, projectId, iid) {
+    return Utils.getDataPromise(t, 'private', 'token')
+        .then(token => {
+            t.card('name', 'url')
+                .then(card => {
+                    const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes?access_token=" + token;
+                    let body = new FormData();
+                    body.append('body', makeCommentBody(card.name, card.url));
+                    body.append('access_token', token);
+                    return fetch(url, {
+                        method: 'POST',
+                        body: body
+                    })
+                })
+        })
+}
+
+function makeCommentBody(name, url) {
+    return "![](https://github.trello.services/images/mini-trello-icon.png) [" + name + "](" + url + ")";
 }
 
 const cardButtonCallback = function(t){
@@ -249,16 +273,16 @@ const cardButtonCallback = function(t){
                                                 let items;
                                                 switch (action) {
                                                     case "tree":
-                                                        items = processBranches(urlForCode, json);
+                                                        items = processBranches(urlForCode, json, result[repoId].id);
                                                         break;
                                                     case "commit":
-                                                        items = processCommits(urlForCode, json);
+                                                        items = processCommits(urlForCode, json, result[repoId].id);
                                                         break;
                                                     case "issues":
-                                                        items = processIssues(urlForCode, json);
+                                                        items = processIssues(urlForCode, json, result[repoId].id);
                                                         break;
                                                     case "merge_requests":
-                                                        items = processMrs(urlForCode, json);
+                                                        items = processMrs(urlForCode, json, result[repoId].id);
                                                         break;
                                                     default:
                                                         alert("Error!");

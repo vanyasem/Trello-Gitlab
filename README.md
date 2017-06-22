@@ -26,7 +26,7 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - ~~Implement attaching PRs~~
 
-- Send comment when attached
+- Send a comment when attached
 
 - Show info about attached Branches
 
