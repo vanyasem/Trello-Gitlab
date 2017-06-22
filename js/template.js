@@ -155,7 +155,10 @@ function processCommits(urlForCode, json, projectId) {
             callback: function(t){
                 return t.attach({ url: urlForCode + id, name: commits[id] })
                     .then(function(){
-                        return t.closePopup();
+                        commentCommit(t, projectId, id)
+                            .then(() => {
+                            return t.closePopup();
+                            })
                     });
             }
         };
@@ -218,7 +221,7 @@ function commentIssue(t, projectId, iid) {
         .then(token => {
             t.card('name', 'url')
                 .then(card => {
-                    const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes?access_token=" + token;
+                    const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes";
                     let body = new FormData();
                     body.append('body', makeCommentBody(card.name, card.url));
                     body.append('access_token', token);
@@ -235,9 +238,26 @@ function commentMr(t, projectId, iid) {
         .then(token => {
             t.card('name', 'url')
                 .then(card => {
-                    const url = Config.domain + "api/v4/projects/" + projectId + "/merge_requests/" + iid + "/notes?access_token=" + token;
+                    const url = Config.domain + "api/v4/projects/" + projectId + "/merge_requests/" + iid + "/notes";
                     let body = new FormData();
                     body.append('body', makeCommentBody(card.name, card.url));
+                    body.append('access_token', token);
+                    return fetch(url, {
+                        method: 'POST',
+                        body: body
+                    })
+                })
+        })
+}
+
+function commentCommit(t, projectId, sha) {
+    return Utils.getDataPromise(t, 'private', 'token')
+        .then(token => {
+            t.card('name', 'url')
+                .then(card => {
+                    const url = Config.domain + "api/v4/projects/" + projectId + "/repository/commits/" + sha + "/comments";
+                    let body = new FormData();
+                    body.append('note', makeCommentBody(card.name, card.url));
                     body.append('access_token', token);
                     return fetch(url, {
                         method: 'POST',
