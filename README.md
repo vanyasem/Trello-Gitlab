@@ -18,11 +18,11 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - ~~Implement Board Buttons~~
 
-- Implement attaching Branches
+- ~~Implement attaching Branches~~
 
 - ~~Implement attaching Commits~~
 
-- Implement attaching Issues
+- ~~Implement attaching Issues~~
 
 - ~~Implement attaching PRs~~
 

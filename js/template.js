@@ -22,7 +22,7 @@ const parkMap = {
 };
 
 const cardActions = {
-    branches: 'Attach Branch',
+    tree: 'Attach Branch',
     commit: 'Attach Commit',
     issues: 'Attach Issue',
     merge_requests: 'Attach Merge Request'
@@ -118,6 +118,29 @@ const formatGitLabUrl = function(t, url){
     }
 };
 
+
+function processBranches(urlForCode, json) {
+    let branches = {};
+
+    for(let i = 0; i < json.length; i++) {
+        const obj = json[i];
+        branches[obj.name] = obj.name;
+    }
+
+    return Object.keys(branches).map(function(name){
+        return {
+            text: branches[name],
+            callback: function(t){
+                return t.attach({ url: urlForCode + name, name: branches[name] })
+                    .then(function(){
+                        return t.closePopup();
+                    });
+            }
+        };
+
+    });
+}
+
 function processCommits(urlForCode, json) {
     let commits = {};
 
@@ -140,12 +163,34 @@ function processCommits(urlForCode, json) {
     });
 }
 
+function processIssues(urlForCode, json) {
+    let issues = {};
+
+    for(let i = 0; i < json.length; i++) {
+        const obj = json[i];
+        issues[obj.iid] = obj.title;
+    }
+
+    return Object.keys(issues).map(function(iid){
+        return {
+            text: issues[iid],
+            callback: function(t){
+                return t.attach({ url: urlForCode + iid, name: issues[iid] })
+                    .then(function(){
+                        return t.closePopup();
+                    });
+            }
+        };
+
+    });
+}
+
 function processMrs(urlForCode, json) {
     let mrs = {};
 
     for(let i = 0; i < json.length; i++) {
         const obj = json[i];
-        mrs[obj.iid] = obj.title;
+        mrs[obj.name] = obj.name;
     }
 
     return Object.keys(mrs).map(function(iid){
@@ -179,14 +224,14 @@ const cardButtonCallback = function(t){
                                     .then(token => {
                                         let url = Config.domain;
                                         switch (action) {
-                                            case "branches":
-                                                url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
+                                            case "tree":
+                                                url += "api/v4/projects/" + result[repoId].id + "/repository/branches?access_token=" + token;
                                                 break;
                                             case "commit":
                                                 url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
                                                 break;
                                             case "issues":
-                                                url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
+                                                url += "api/v4/projects/" + result[repoId].id + "/issues?access_token=" + token;
                                                 break;
                                             case "merge_requests":
                                                 url += "api/v4/projects/" + result[repoId].id + "/merge_requests?access_token=" + token;
@@ -203,13 +248,14 @@ const cardButtonCallback = function(t){
                                             .then(function(json) {
                                                 let items;
                                                 switch (action) {
-                                                    case "branches":
-
+                                                    case "tree":
+                                                        items = processBranches(urlForCode, json);
                                                         break;
                                                     case "commit":
                                                         items = processCommits(urlForCode, json);
                                                         break;
                                                     case "issues":
+                                                        items = processIssues(urlForCode, json);
                                                         break;
                                                     case "merge_requests":
                                                         items = processMrs(urlForCode, json);
