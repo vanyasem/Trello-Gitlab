@@ -119,23 +119,66 @@ const formatGitLabUrl = function(t, url){
 };
 
 const cardButtonCallback = function(t){
-    const items = Object.keys(cardActions).map(function(action){
+    const actions = Object.keys(cardActions).map(function(action){
 
         return {
             text: cardActions[action],
             callback: function(t){
                 return Utils.getDataPromise(t, "shared", "repos").then(result => {
 
-
-                    const items = Object.keys(result).map(function(repoId){
+                    const repos = Object.keys(result).map(function(repoId){
                         const urlForCode = Config.domain + result[repoId].name + '/' + action + '/';
                         return {
                             text: result[repoId].name,
-                            icon: GRAY_ICON,
                             callback: function (t) {
-                                return t.attach({ url: urlForCode, name: cardActions[action] })
-                                    .then(function(){
-                                        return t.closePopup();
+                                return Utils.getDataPromise(t, 'private', 'token')
+                                    .then(token => {
+                                        let url = Config.domain;
+                                        switch (action) {
+                                            case "branches":
+                                                break;
+                                            case "commit":
+                                                url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
+                                                break;
+                                            case "issues":
+                                                break;
+                                            case "merge_requests":
+                                                break;
+                                            default:
+                                                alert("Error!");
+                                                return;
+                                        }
+
+                                        return fetch(url)
+                                            .then(function(response) {
+                                                return response.json();
+                                            })
+                                            .then(function(json) {
+                                                let commits = {};
+
+                                                for(let i = 0; i < json.length; i++) {
+                                                    const obj = json[i];
+                                                    commits[obj.id] = obj.title;
+                                                }
+
+                                                const items = Object.keys(commits).map(function(id){
+                                                    return {
+                                                        text: commits[id],
+                                                        callback: function(t){
+                                                            return t.attach({ url: urlForCode + id, name: commits[id] })
+                                                                .then(function(){
+                                                                    return t.closePopup();
+                                                                });
+                                                        }
+                                                    };
+
+                                                });
+
+                                                return t.popup({
+                                                    title: 'as',
+                                                    items: items
+                                                });
+                                            });
                                     })
                             }
                         };
@@ -143,7 +186,7 @@ const cardButtonCallback = function(t){
 
                     return t.popup({
                         title: 'Repos',
-                        items: items
+                        items: repos
                     });
                 });
             }
@@ -152,7 +195,7 @@ const cardButtonCallback = function(t){
 
     return t.popup({
         title: 'GitLab',
-        items: items
+        items: actions
     });
 };
 
@@ -164,7 +207,7 @@ TrelloPowerUp.initialize({
 
         // we will just claim urls for Yellowstone
         const claimed = options.entries.filter(function(attachment){
-            return attachment.url.indexOf('http://www.nps.gov/yell/') === 0;
+            return attachment.url.indexOf('http://www.nps.gov/yell/') === 0; //todo claim Config.domain + reponame + actins
         });
 
         // you can have more than one attachment section on a card

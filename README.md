@@ -20,13 +20,21 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - Implement attaching Branches
 
-- Implement attaching Commits
+- ~~Implement attaching Commits~~
 
 - Implement attaching Issues
 
 - Implement attaching PRs
 
 - Send comment when attached
+
+- Show info about attached Branches
+
+- Show info about attached Commits
+
+- Show info about attached Issues
+
+- Show info about attached PRs
 
 - Improve the UI
 
