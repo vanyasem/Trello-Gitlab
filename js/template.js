@@ -193,7 +193,7 @@ function processMrs(urlForCode, json, projectId) {
 
     for(let i = 0; i < json.length; i++) {
         const obj = json[i];
-        mrs[obj.name] = obj.name;
+        mrs[obj.iid] = obj.title;
     }
 
     return Object.keys(mrs).map(function(iid){
@@ -202,7 +202,10 @@ function processMrs(urlForCode, json, projectId) {
             callback: function(t){
                 return t.attach({ url: urlForCode + iid, name: mrs[iid] })
                     .then(function(){
-                        return t.closePopup();
+                        commentMr(t, projectId, iid)
+                            .then(() => {
+                            return t.closePopup();
+                        })
                     });
             }
         };
@@ -216,6 +219,23 @@ function commentIssue(t, projectId, iid) {
             t.card('name', 'url')
                 .then(card => {
                     const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes?access_token=" + token;
+                    let body = new FormData();
+                    body.append('body', makeCommentBody(card.name, card.url));
+                    body.append('access_token', token);
+                    return fetch(url, {
+                        method: 'POST',
+                        body: body
+                    })
+                })
+        })
+}
+
+function commentMr(t, projectId, iid) {
+    return Utils.getDataPromise(t, 'private', 'token')
+        .then(token => {
+            t.card('name', 'url')
+                .then(card => {
+                    const url = Config.domain + "api/v4/projects/" + projectId + "/merge_requests/" + iid + "/notes?access_token=" + token;
                     let body = new FormData();
                     body.append('body', makeCommentBody(card.name, card.url));
                     body.append('access_token', token);
