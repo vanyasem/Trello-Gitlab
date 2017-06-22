@@ -28,6 +28,24 @@ const cardActions = {
     merge_requests: 'Attach Pull Request'
 };
 
+const boardButtonCallback = function(t){
+    return Utils.getDataPromise(t, "shared", "repos").then(result => {
+
+        const items = Object.keys(result).map(function(repoId){
+            return {
+                text: result[repoId].name,
+                icon: GRAY_ICON,
+                url: Config.domain + result[repoId].name
+            };
+        });
+
+        return t.popup({
+            title: 'Repos',
+            items: items
+        });
+    });
+};
+
 const getBadges = function(t){
     return t.card('name')
         .get('name')
@@ -103,7 +121,7 @@ const formatGitLabUrl = function(t, url){
 const cardButtonCallback = function(t){
     const items = Object.keys(cardActions).map(function(action){
 
-        const urlForCode = 'https://gitlab.com' + action + '/';
+        const urlForCode = Config.domain + action + '/';
         return {
             text: cardActions[action],
             url: urlForCode,
@@ -173,6 +191,13 @@ TrelloPowerUp.initialize({
         } else {
             throw t.NotHandled();
         }
+    },
+    'board-buttons': function(t, options){
+        return [{
+            icon: WHITE_ICON,
+            text: 'Repos',
+            callback: boardButtonCallback
+        }];
     },
     'card-badges': function(t, options){
         return getBadges(t);

@@ -16,6 +16,8 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - ~~Implement connecting repos~~
 
+- ~~Implement Board Buttons~~
+
 - Implement attaching Branches
 
 - Implement attaching Commits
@@ -26,10 +28,10 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - Send comment when attached
 
-- Implement Board Buttons
-
 - Improve the UI
 
 - Internationalization
 
 - Contact GitLab and make it official
+
+- Add icons

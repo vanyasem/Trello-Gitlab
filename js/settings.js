@@ -25,7 +25,6 @@ t.render(function(){
 
                     remove.onclick = function() {
                         const id = this.getAttribute("data-repo");
-                        alert(id);
                         removeFromRepoList(id);
                     };
                 }
@@ -86,7 +85,7 @@ document.getElementById('repoAdd').addEventListener('click', function(){
 
                     for(let i = 0; i < json.length; i++) {
                         const obj = json[i];
-                        literal[obj.id] = obj.name_with_namespace;
+                        literal[obj.id] = obj.path_with_namespace;
                     }
 
                     const items = Object.keys(literal).map(function(repoId){
