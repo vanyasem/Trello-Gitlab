@@ -25,7 +25,7 @@ const cardActions = {
     branches: 'Attach Branch',
     commit: 'Attach Commit',
     issues: 'Attach Issue',
-    merge_requests: 'Attach Pull Request'
+    merge_requests: 'Attach Merge Request'
 };
 
 const boardButtonCallback = function(t){
@@ -121,15 +121,31 @@ const formatGitLabUrl = function(t, url){
 const cardButtonCallback = function(t){
     const items = Object.keys(cardActions).map(function(action){
 
-        const urlForCode = Config.domain + action + '/';
         return {
             text: cardActions[action],
-            url: urlForCode,
             callback: function(t){
-                return t.attach({ url: urlForCode, name: cardActions[action] })
-                    .then(function(){
-                        return t.closePopup();
-                    })
+                return Utils.getDataPromise(t, "shared", "repos").then(result => {
+
+
+                    const items = Object.keys(result).map(function(repoId){
+                        const urlForCode = Config.domain + result[repoId].name + '/' + action + '/';
+                        return {
+                            text: result[repoId].name,
+                            icon: GRAY_ICON,
+                            callback: function (t) {
+                                return t.attach({ url: urlForCode, name: cardActions[action] })
+                                    .then(function(){
+                                        return t.closePopup();
+                                    })
+                            }
+                        };
+                    });
+
+                    return t.popup({
+                        title: 'Repos',
+                        items: items
+                    });
+                });
             }
         };
     });
