@@ -24,7 +24,7 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - Implement attaching Issues
 
-- Implement attaching PRs
+- ~~Implement attaching PRs~~
 
 - Send comment when attached
 

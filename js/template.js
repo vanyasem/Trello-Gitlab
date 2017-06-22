@@ -118,6 +118,50 @@ const formatGitLabUrl = function(t, url){
     }
 };
 
+function processCommits(urlForCode, json) {
+    let commits = {};
+
+    for(let i = 0; i < json.length; i++) {
+        const obj = json[i];
+        commits[obj.id] = obj.title;
+    }
+
+    return Object.keys(commits).map(function(id){
+        return {
+            text: commits[id],
+            callback: function(t){
+                return t.attach({ url: urlForCode + id, name: commits[id] })
+                    .then(function(){
+                        return t.closePopup();
+                    });
+            }
+        };
+
+    });
+}
+
+function processMrs(urlForCode, json) {
+    let mrs = {};
+
+    for(let i = 0; i < json.length; i++) {
+        const obj = json[i];
+        mrs[obj.iid] = obj.title;
+    }
+
+    return Object.keys(mrs).map(function(iid){
+        return {
+            text: mrs[iid],
+            callback: function(t){
+                return t.attach({ url: urlForCode + iid, name: mrs[iid] })
+                    .then(function(){
+                        return t.closePopup();
+                    });
+            }
+        };
+
+    });
+}
+
 const cardButtonCallback = function(t){
     const actions = Object.keys(cardActions).map(function(action){
 
@@ -136,13 +180,16 @@ const cardButtonCallback = function(t){
                                         let url = Config.domain;
                                         switch (action) {
                                             case "branches":
+                                                url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
                                                 break;
                                             case "commit":
                                                 url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
                                                 break;
                                             case "issues":
+                                                url += "api/v4/projects/" + result[repoId].id + "/repository/commits?access_token=" + token;
                                                 break;
                                             case "merge_requests":
+                                                url += "api/v4/projects/" + result[repoId].id + "/merge_requests?access_token=" + token;
                                                 break;
                                             default:
                                                 alert("Error!");
@@ -154,28 +201,26 @@ const cardButtonCallback = function(t){
                                                 return response.json();
                                             })
                                             .then(function(json) {
-                                                let commits = {};
+                                                let items;
+                                                switch (action) {
+                                                    case "branches":
 
-                                                for(let i = 0; i < json.length; i++) {
-                                                    const obj = json[i];
-                                                    commits[obj.id] = obj.title;
+                                                        break;
+                                                    case "commit":
+                                                        items = processCommits(urlForCode, json);
+                                                        break;
+                                                    case "issues":
+                                                        break;
+                                                    case "merge_requests":
+                                                        items = processMrs(urlForCode, json);
+                                                        break;
+                                                    default:
+                                                        alert("Error!");
+                                                        return;
                                                 }
 
-                                                const items = Object.keys(commits).map(function(id){
-                                                    return {
-                                                        text: commits[id],
-                                                        callback: function(t){
-                                                            return t.attach({ url: urlForCode + id, name: commits[id] })
-                                                                .then(function(){
-                                                                    return t.closePopup();
-                                                                });
-                                                        }
-                                                    };
-
-                                                });
-
                                                 return t.popup({
-                                                    title: 'as',
+                                                    title: cardActions[action],
                                                     items: items
                                                 });
                                             });
@@ -185,7 +230,7 @@ const cardButtonCallback = function(t){
                     });
 
                     return t.popup({
-                        title: 'Repos',
+                        title: 'Choose Repo',
                         items: repos
                     });
                 });
