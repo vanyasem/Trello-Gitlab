@@ -379,56 +379,48 @@ TrelloPowerUp.initialize({
         // you can have more than one attachment section on a card
         // you can group items together into one section, have a section
         // per attachment, or anything in between.
-        if(commits && commits.length > 0){
-            // if the title for your section requires a network call or other
-            // potentially length operation you can provide a function for the title
-            // that returns the section title. If you do so, provide a unique id for
-            // your section
-            return [
-              /*  {
-                    claimed: mrs,
-                    icon: GRAY_ICON,
-                    title: 'GitLab Merge Requests',
-                    content: {
-                        type: 'iframe',
-                        url: t.signUrl('./section-mrs.html', { arg: 'you can pass your section args here' }),
-                        height: 230
-                    }
-                },
-                {
-                    claimed: issues,
-                    icon: GRAY_ICON,
-                    title: 'GitLab Issues',
-                    content: {
-                        type: 'iframe',
-                        url: t.signUrl('./section-issues.html', { arg: 'you can pass your section args here' }),
-                        height: 230
-                    }
-                },*/
-                {
-                    claimed: commits,
-                    icon: GRAY_ICON,
-                    title: 'GitLab Commits',
-                    content: {
-                        type: 'iframe',
-                        url: t.signUrl('./section-commits.html', { arg: 'you can pass your section args here' }),
-                        height: 230
-                    }
-                }/*,
-                {
-                    claimed: branches,
-                    icon: GRAY_ICON,
-                    title: 'GitLab Branches',
-                    content: {
-                        type: 'iframe',
-                        url: t.signUrl('./section-branches.html', { arg: 'you can pass your section args here' }),
-                        height: 230
-                    }
-                }*/
-            ];
-        } else {
-            return [];
-        }
+        return [
+          /*  {
+                claimed: mrs,
+                icon: GRAY_ICON,
+                title: 'GitLab Merge Requests',
+                content: {
+                    type: 'iframe',
+                    url: t.signUrl('./section-mrs.html', { arg: 'you can pass your section args here' }),
+                    height: 230
+                }
+            },
+            {
+                claimed: issues,
+                icon: GRAY_ICON,
+                title: 'GitLab Issues',
+                content: {
+                    type: 'iframe',
+                    url: t.signUrl('./section-issues.html', { arg: 'you can pass your section args here' }),
+                    height: 230
+                }
+            },*/
+            {
+                claimed: commits,
+                icon: GRAY_ICON,
+                title: 'GitLab Commits',
+                content: {
+                    type: 'iframe',
+                    url: t.signUrl('./section-commits.html', { arg: 'you can pass your section args here' }),
+                    height: 230
+                }
+            },
+            {
+                claimed: branches,
+                icon: GRAY_ICON,
+                title: 'GitLab Branches',
+                content: {
+                    type: 'iframe',
+                    url: t.signUrl('./section-branches.html', { arg: 'you can pass your section args here' }),
+                    height: 230
+                }
+            }
+        ];
     },
     'attachment-thumbnail': function(t, options){
         const parkName = formatNPSUrl(t, options.url);
