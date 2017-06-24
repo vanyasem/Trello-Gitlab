@@ -6,34 +6,40 @@ const t = TrelloPowerUp.iframe();
 let repoList = document.getElementById('repoList');
 
 t.render(function(){
-    return Utils.getDataPromise(t, 'shared', 'repos')
-        .then(result => {
-            if(result && result.length > 0) {
-                repoList.innerHTML = "";
-                for(let i = 0; i < result.length; i++) {
-                    const par = document.createElement("p");
-                    repoList.appendChild(par);
+    return Utils.getDataPromise(t, "private", "comment", false)
+        .then(comment => {
+            checkbox.checked = comment;
 
-                    const name = document.createTextNode(result[i]["name"]);
-                    par.appendChild(name);
+            return Utils.getDataPromise(t, 'shared', 'repos')
+                .then(result => {
+                    if(result && result.length > 0) {
+                        repoList.innerHTML = "";
+                        for(let i = 0; i < result.length; i++) {
+                            const par = document.createElement("p");
+                            repoList.appendChild(par);
 
-                    let remove = document.createElement("a");
-                    remove.setAttribute("data-repo", result[i]["id"]);
-                    remove.setAttribute("style", "float: right;");
-                    remove.text = "Remove";
-                    par.appendChild(remove);
+                            const name = document.createTextNode(result[i]["name"]);
+                            par.appendChild(name);
 
-                    remove.onclick = function() {
-                        const id = this.getAttribute("data-repo");
-                        removeFromRepoList(id);
-                    };
-                }
-            }
-            else
-                repoList.innerHTML = "No repos added";
-        }).then(() => {
-            t.sizeTo('#content')
-                .done();
+                            let remove = document.createElement("a");
+                            remove.setAttribute("data-repo", result[i]["id"]);
+                            remove.setAttribute("style", "float: right;");
+                            remove.text = "Remove";
+                            par.appendChild(remove);
+
+                            remove.onclick = function() {
+                                const id = this.getAttribute("data-repo");
+                                removeFromRepoList(id);
+                            };
+                        }
+                    }
+                    else {
+                        repoList.innerHTML = "No repos added";
+                    }
+                }).then(() => {
+                    t.sizeTo('#content')
+                        .done();
+                })
         })
 });
 
@@ -111,3 +117,12 @@ document.getElementById('repoAdd').addEventListener('click', function(){
                 .done();
         });
 });
+
+let checkbox = document.getElementById("comment");
+checkbox.onchange = function() {
+    if(this.checked) {
+        Utils.setDataPromise(t, "private", "comment", true);
+    } else {
+        Utils.setDataPromise(t, "private", "comment", false)
+    }
+};

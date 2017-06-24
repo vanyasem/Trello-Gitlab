@@ -10,7 +10,7 @@ t.render(function(){
     t.card('attachments')
         .get('attachments')
         .filter(function(attachment){
-            return /^https?:\/\/gitlab.com\/.+\/tree\/.+$/.test(attachment.url);
+            return /^https?:\/\/gitlab.com\/.+\/merge_requests\/.+$/.test(attachment.url);
         })
         .then(function(yellowstoneAttachments){
             yellowstoneAttachments.map(function(a){
@@ -18,25 +18,23 @@ t.render(function(){
                     .then(token => {
                         const path = Utils.getPathname(a.url);
                         const pathArray = path.split( '/' );
-                        let branchName = "";
-                        for(let i = 4; i < pathArray.length; i++) {
-                            branchName += "/" + pathArray[i]
-                        }
                         const url = Config.domain + "api/v4/projects/" +
                             encodeURIComponent(pathArray[1] + "/" + pathArray[2])
-                            + "/repository/branches" + branchName + "?access_token=" + token;
+                            + "/merge_requests/" + pathArray[4] + "?access_token=" + token;
 
                         return fetch(url)
                             .then(function(response) {
                                 return response.json();
                             })
                             .then(function(json) {
-                                let title = document.getElementById('repo');
-                                title.textContent = pathArray[1] + "/" + pathArray[2];
+                                let title = document.getElementById('title');
+                                title.textContent = json.title;
                                 title.setAttribute('href', a.url);
-                                document.getElementById('branch').textContent = json.name;
-                                document.getElementById('message').textContent = json.commit.title;
-                                document.getElementById('author').textContent = "by " + json.commit.author_name;
+                                document.getElementById('repo').textContent = pathArray[1] + "/" + pathArray[2];
+                                document.getElementById('number').textContent = "!" + json.iid;
+                                document.getElementById('author').textContent = "opened by " + json.author.name;
+                                document.getElementById('from').textContent = json.target_branch;
+                                document.getElementById('destination').textContent = json.source_branch;
                             })
                     }).then(() => {
                         return t.sizeTo('#content');

@@ -217,53 +217,68 @@ function processMrs(urlForCode, json, projectId) {
 }
 
 function commentIssue(t, projectId, iid) {
-    return Utils.getDataPromise(t, 'private', 'token')
-        .then(token => {
-            t.card('name', 'url')
-                .then(card => {
-                    const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes";
-                    let body = new FormData();
-                    body.append('body', makeCommentBody(card.name, card.url));
-                    body.append('access_token', token);
-                    return fetch(url, {
-                        method: 'POST',
-                        body: body
+    return Utils.getDataPromise(t, "private", "comment", false)
+        .then(comment => {
+            if(comment) {
+                return Utils.getDataPromise(t, 'private', 'token')
+                    .then(token => {
+                        t.card('name', 'url')
+                            .then(card => {
+                                const url = Config.domain + "api/v4/projects/" + projectId + "/issues/" + iid + "/notes";
+                                let body = new FormData();
+                                body.append('body', makeCommentBody(card.name, card.url));
+                                body.append('access_token', token);
+                                return fetch(url, {
+                                    method: 'POST',
+                                    body: body
+                                })
+                            })
                     })
-                })
+            }
         })
 }
 
 function commentMr(t, projectId, iid) {
-    return Utils.getDataPromise(t, 'private', 'token')
-        .then(token => {
-            t.card('name', 'url')
-                .then(card => {
-                    const url = Config.domain + "api/v4/projects/" + projectId + "/merge_requests/" + iid + "/notes";
-                    let body = new FormData();
-                    body.append('body', makeCommentBody(card.name, card.url));
-                    body.append('access_token', token);
-                    return fetch(url, {
-                        method: 'POST',
-                        body: body
+    return Utils.getDataPromise(t, "private", "comment", false)
+        .then(comment => {
+            if(comment) {
+                return Utils.getDataPromise(t, 'private', 'token')
+                    .then(token => {
+                        t.card('name', 'url')
+                            .then(card => {
+                                const url = Config.domain + "api/v4/projects/" + projectId + "/merge_requests/" + iid + "/notes";
+                                let body = new FormData();
+                                body.append('body', makeCommentBody(card.name, card.url));
+                                body.append('access_token', token);
+                                return fetch(url, {
+                                    method: 'POST',
+                                    body: body
+                                })
+                            })
                     })
-                })
+            }
         })
 }
 
 function commentCommit(t, projectId, sha) {
-    return Utils.getDataPromise(t, 'private', 'token')
-        .then(token => {
-            t.card('name', 'url')
-                .then(card => {
-                    const url = Config.domain + "api/v4/projects/" + projectId + "/repository/commits/" + sha + "/comments";
-                    let body = new FormData();
-                    body.append('note', makeCommentBody(card.name, card.url));
-                    body.append('access_token', token);
-                    return fetch(url, {
-                        method: 'POST',
-                        body: body
+    return Utils.getDataPromise(t, "private", "comment", false)
+        .then(comment => {
+            if(comment) {
+                return Utils.getDataPromise(t, 'private', 'token')
+                    .then(token => {
+                        t.card('name', 'url')
+                            .then(card => {
+                                const url = Config.domain + "api/v4/projects/" + projectId + "/repository/commits/" + sha + "/comments";
+                                let body = new FormData();
+                                body.append('note', makeCommentBody(card.name, card.url));
+                                body.append('access_token', token);
+                                return fetch(url, {
+                                    method: 'POST',
+                                    body: body
+                                })
+                            })
                     })
-                })
+            }
         })
 }
 
@@ -380,17 +395,17 @@ TrelloPowerUp.initialize({
         // you can group items together into one section, have a section
         // per attachment, or anything in between.
         return [
-          /*  {
+            {
                 claimed: mrs,
                 icon: GRAY_ICON,
                 title: 'GitLab Merge Requests',
                 content: {
                     type: 'iframe',
-                    url: t.signUrl('./section-mrs.html', { arg: 'you can pass your section args here' }),
+                    url: t.signUrl('./section-mrs.html'),
                     height: 230
                 }
             },
-            {
+            /*{
                 claimed: issues,
                 icon: GRAY_ICON,
                 title: 'GitLab Issues',
@@ -406,7 +421,7 @@ TrelloPowerUp.initialize({
                 title: 'GitLab Commits',
                 content: {
                     type: 'iframe',
-                    url: t.signUrl('./section-commits.html', { arg: 'you can pass your section args here' }),
+                    url: t.signUrl('./section-commits.html'),
                     height: 230
                 }
             },
@@ -416,7 +431,7 @@ TrelloPowerUp.initialize({
                 title: 'GitLab Branches',
                 content: {
                     type: 'iframe',
-                    url: t.signUrl('./section-branches.html', { arg: 'you can pass your section args here' }),
+                    url: t.signUrl('./section-branches.html'),
                     height: 230
                 }
             }

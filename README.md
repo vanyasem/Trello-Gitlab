@@ -26,15 +26,15 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - ~~Implement attaching PRs~~
 
-- Send a comment when attached
+- ~~Send a comment when attached~~
 
-- Show info about attached Branches
+- ~~Show info about attached Branches~~
 
 - ~~Show info about attached Commits~~
 
 - Show info about attached Issues
 
-- Show info about attached PRs
+- ~~Show info about attached PRs~~
 
 - Implement card badges
 
