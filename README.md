@@ -30,11 +30,13 @@ This Power-Up is WIP, however, if you want to try this out right away without wa
 
 - Show info about attached Branches
 
-- Show info about attached Commits
+- ~~Show info about attached Commits~~
 
 - Show info about attached Issues
 
 - Show info about attached PRs
+
+- Implement card badges
 
 - Improve the UI
 

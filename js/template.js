@@ -360,30 +360,72 @@ TrelloPowerUp.initialize({
         // you can look through them and 'claim' any that you want to
         // include in your section.
 
-        // we will just claim urls for Yellowstone
-        const claimed = options.entries.filter(function(attachment){
-            return attachment.url.indexOf('http://www.nps.gov/yell/') === 0; //todo claim Config.domain + reponame + actins
+        const commits = options.entries.filter(function(attachment) {
+            return /^https?:\/\/gitlab.com\/.+\/commit\/.+$/.exec(attachment.url);
+        });
+
+        const issues = options.entries.filter(function(attachment) {
+            return /^https?:\/\/gitlab.com\/.+\/issues\/.+$/.exec(attachment.url);
+        });
+
+        const mrs = options.entries.filter(function(attachment) {
+            return /^https?:\/\/gitlab.com\/.+\/merge_requests\/.+$/.exec(attachment.url);
+        });
+
+        const branches = options.entries.filter(function(attachment) {
+            return /^https?:\/\/gitlab.com\/.+\/tree\/.+$/.exec(attachment.url);
         });
 
         // you can have more than one attachment section on a card
         // you can group items together into one section, have a section
         // per attachment, or anything in between.
-        if(claimed && claimed.length > 0){
+        if(commits && commits.length > 0){
             // if the title for your section requires a network call or other
             // potentially length operation you can provide a function for the title
             // that returns the section title. If you do so, provide a unique id for
             // your section
-            return [{
-                id: 'Yellowstone', // optional if you aren't using a function for the title
-                claimed: claimed,
-                icon: GRAY_ICON,
-                title: 'Example Attachment Section: Yellowstone',
-                content: {
-                    type: 'iframe',
-                    url: t.signUrl('./section.html', { arg: 'you can pass your section args here' }),
-                    height: 230
-                }
-            }];
+            return [
+              /*  {
+                    claimed: mrs,
+                    icon: GRAY_ICON,
+                    title: 'GitLab Merge Requests',
+                    content: {
+                        type: 'iframe',
+                        url: t.signUrl('./section-mrs.html', { arg: 'you can pass your section args here' }),
+                        height: 230
+                    }
+                },
+                {
+                    claimed: issues,
+                    icon: GRAY_ICON,
+                    title: 'GitLab Issues',
+                    content: {
+                        type: 'iframe',
+                        url: t.signUrl('./section-issues.html', { arg: 'you can pass your section args here' }),
+                        height: 230
+                    }
+                },*/
+                {
+                    claimed: commits,
+                    icon: GRAY_ICON,
+                    title: 'GitLab Commits',
+                    content: {
+                        type: 'iframe',
+                        url: t.signUrl('./section-commits.html', { arg: 'you can pass your section args here' }),
+                        height: 230
+                    }
+                }/*,
+                {
+                    claimed: branches,
+                    icon: GRAY_ICON,
+                    title: 'GitLab Branches',
+                    content: {
+                        type: 'iframe',
+                        url: t.signUrl('./section-branches.html', { arg: 'you can pass your section args here' }),
+                        height: 230
+                    }
+                }*/
+            ];
         } else {
             return [];
         }

@@ -32,6 +32,12 @@ const Utils = (function(){
 
         tokenLooksValid: function(token) {
             return /^[0-9a-f]{64}$/.test(token);
+        },
+
+        getPathname: function(href) {
+            let l = document.createElement("a");
+            l.href = href;
+            return l.pathname;
         }
     }
 
